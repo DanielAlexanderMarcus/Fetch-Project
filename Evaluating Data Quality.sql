@@ -18,22 +18,19 @@ from   openjson (@json)
 WITH (state varchar(3), active bit, role varchar(16), createdDate  nvarchar(max) AS JSON, _id nvarchar(max) AS JSON, lastLogin nvarchar(max) AS JSON , signUpSource varchar(16))    
 
 
-select count(_id) from @usersholding
-select count(distinct _id) from @usersholding
+select count(_id) records, count(distinct _id) distinct_records from @usersholding
 
 /* Issue 2: expected to join from receipts to brand_dim on brandcode but this value is not unique in the brands file - should have brandid available in receipts file to join on*/
 
-select brandcode, count(*) from dbo.dim_brands
+select brandcode, count(*) dupes from dbo.dim_brands
 where isnull(brandcode,'')<>''
 group by brandcode
 having count(*)>1
 
 /* Issue 3: many brandcodes are null or blank*/
 
-select count(*) from dbo.dim_brands
+select count(*) brands_with_no_code from dbo.dim_brands
 where isnull(brandcode,'')<>''
-group by brandcode
-having count(*)>1
 
 /* Issue 4: most receipts have no brandcode information on items purchased and those that do are mostly from January*/
 
@@ -55,8 +52,8 @@ WITH (_id nvarchar(max) AS JSON, bonusPointsEarned int, bonusPointsEarnedReason 
 
 select sum(case when rewardsReceiptItemList like '%brandcode%' then 1 else 0 end) has_brandcode, sum(case when rewardsReceiptItemList not like '%brandcode%' then 1 else 0 end) no_brandcode from @receiptsholding  
 
-select distinct cast(purchasedate as date) purchasedate
+select distinct cast(purchasedate as date) purchasedate_for_items_with_brand_info
 from dbo.Receipts_Fact a 
 join dbo.Receipts_List_Attributes b on a.receiptid=b.receiptid  
 where  brandcode is not null 
-order by purchasedate
+order by purchasedate_for_items_with_brand_info
