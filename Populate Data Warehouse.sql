@@ -2,7 +2,7 @@
 This script populates the tables for our data warehouse directly from the sample json files.  
 Please create the 4 tables below before running for the first time. 
 It is assumed that the raw json files are located directly in the C drive.  
-The script may take a few minutes to complete.
+The script may take a while to complete.
 
 create table dbo.Dim_Users  (state varchar(3), active bit, role varchar(16), createdDate  datetime, userId nvarchar(max), lastLogin datetime , signUpSource varchar(16)) 
 create table dbo.Dim_Brands  (brandId varchar(64), barcode varchar(32), brandCode varchar(255), category  varchar(32), categoryCode varchar(64),  topBrand bit, name varchar(255), CPGRef varchar(16), CPGId varchar(32)) 
